@@ -1,24 +1,41 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
-import { useScrollProgress } from "@/hooks/use-scroll-progress"
+import { motion } from "framer-motion"
 import { Bell, Users, Settings, Send, Gift, Repeat } from "lucide-react"
 
-const clients = [
-  { angle: 0, label: "Мария", icon: Users },
-  { angle: 60, label: "Алексей", icon: Users },
-  { angle: 120, label: "Елена", icon: Users },
-  { angle: 180, label: "Дмитрий", icon: Users },
-  { angle: 240, label: "Анна", icon: Users },
-  { angle: 300, label: "Сергей", icon: Users },
+// Customer nodes positioned radially
+const customers = [
+  { name: "Анна", x: 15, y: 20, angle: -135 },
+  { name: "Сергей", x: 85, y: 20, angle: -45 },
+  { name: "Дмитрий", x: 8, y: 50, angle: 180 },
+  { name: "Мария", x: 92, y: 50, angle: 0 },
+  { name: "Елена", x: 20, y: 80, angle: 135 },
+  { name: "Алексей", x: 80, y: 80, angle: 45 },
 ]
 
+// Notification bubbles
 const notifications = [
-  { text: "Пора заказать розы для мамы", icon: Gift, x: 65, y: 15 },
-  { text: "Скидка 10% только для вас", icon: Bell, x: 15, y: 70 },
-  { text: "Ваш заказ доставлен!", icon: Send, x: 75, y: 75 },
+  { 
+    text: "Пора заказать розы для мамы", 
+    icon: Gift, 
+    x: 72, 
+    y: 15 
+  },
+  { 
+    text: "Скидка 10% только для вас", 
+    icon: Bell, 
+    x: 12, 
+    y: 72 
+  },
+  { 
+    text: "Ваш заказ доставлен!", 
+    icon: Send, 
+    x: 75, 
+    y: 75 
+  },
 ]
 
+// Features at the bottom
 const features = [
   { icon: Send, title: "Бесплатные рассылки", desc: "Перед праздниками" },
   { icon: Bell, title: "Авто-напоминания", desc: "О важных датах" },
@@ -27,181 +44,181 @@ const features = [
 ]
 
 export function SceneNetwork() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const progress = useScrollProgress(sectionRef)
-  const [radius, setRadius] = useState(160) // Default matches server render to avoid hydration mismatch
-
-  useEffect(() => {
-    const updateRadius = () =>
-      setRadius(window.innerWidth < 768 ? 100 : 160)
-    updateRadius()
-    window.addEventListener("resize", updateRadius)
-    return () => window.removeEventListener("resize", updateRadius)
-  }, [])
-
-  const animProgress = Math.min(Math.max((progress - 0.15) / 0.6, 0), 1)
-  const pulsePhase = animProgress * Math.PI * 4
-  const notifProgress = Math.min(Math.max((animProgress - 0.4) / 0.3, 0), 1)
-  const featuresProgress = Math.min(Math.max((animProgress - 0.6) / 0.3, 0), 1)
-
   return (
-    <section ref={sectionRef} className="relative" style={{ height: "350vh" }}>
-      <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "radial-gradient(ellipse at center, #0f3328 0%, #0A261D 70%)",
-          }}
-        />
+    <section className="relative min-h-screen flex flex-col items-center justify-between overflow-hidden py-20 md:py-32">
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "radial-gradient(ellipse at center, #0f3328 0%, #0A261D 70%)",
+        }}
+      />
 
-        {/* Title */}
-        <div
-          className="relative z-20 mb-8 px-4 text-center md:mb-12"
-          style={{
-            opacity: Math.min(animProgress * 3, 1),
-            transform: `translateY(${(1 - Math.min(animProgress * 3, 1)) * 20}px)`,
-          }}
-        >
-          <h2 className="font-serif text-3xl font-bold text-[#F8F5F2] md:text-5xl">
-            <span className="text-balance">
-              {"Ваша база клиентов — ваш "}
-              <span className="text-[#FBCFE8]">{"главный актив"}</span>
-            </span>
-          </h2>
-        </div>
+      {/* Title */}
+      <motion.div
+        className="relative z-20 text-center px-4 pt-8"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <h2 className="font-serif text-3xl font-bold text-[#F8F5F2] md:text-5xl">
+          <span className="text-balance">
+            {"Ваша база клиентов — ваш "}
+            <span className="text-[#FBCFE8]">{"главный актив"}</span>
+          </span>
+        </h2>
+      </motion.div>
 
-        {/* Network visualization */}
-        <div className="relative z-10 flex h-[350px] w-[350px] items-center justify-center md:h-[420px] md:w-[420px]">
-          {/* Center phone */}
-          <div className="absolute flex h-16 w-16 items-center justify-center rounded-2xl border border-[#CCFF00]/30 bg-[#0A261D] shadow-lg md:h-20 md:w-20">
-            <span className="font-serif text-lg font-bold text-[#CCFF00] md:text-xl">
-              {"F"}
-            </span>
-            {/* Pulse rings */}
-            {[1, 2, 3].map((ring) => (
-              <div
+      {/* Radial Network Visualization */}
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 flex items-center justify-center" style={{ minHeight: "600px" }}>
+        <div className="relative w-full h-[600px] md:h-[550px]">
+          
+          {/* Central Hub with Ripple Effect */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            {/* Concentric squares (ripples) */}
+            {[1, 2, 3, 4].map((ring) => (
+              <motion.div
                 key={ring}
-                className="absolute rounded-2xl border border-[#CCFF00]"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-emerald-800/30"
                 style={{
-                  inset: -ring * 15,
-                  opacity:
-                    Math.sin(pulsePhase - ring * 0.5) * 0.15 + 0.05,
-                  transition: "opacity 0.1s",
+                  width: ring * 80,
+                  height: ring * 80,
                 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1 + ring * 0.1 }}
               />
             ))}
+
+            {/* Central "F" logo */}
+            <motion.div
+              className="relative z-30 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-[#CCFF00]/40 bg-[#0A261D] shadow-2xl"
+              initial={{ opacity: 0, scale: 0 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3, type: "spring" }}
+            >
+              <span className="font-serif text-3xl font-bold text-[#CCFF00]">
+                {"F"}
+              </span>
+            </motion.div>
           </div>
 
-          {/* Client nodes */}
-          {clients.map((client, i) => {
-            const rad = (client.angle * Math.PI) / 180
-            const x = Math.cos(rad) * radius
-            const y = Math.sin(rad) * radius
-            const delay = i * 0.08
-            const nodeProgress = Math.min(
-              Math.max((animProgress - delay) / 0.4, 0),
-              1
-            )
-            const Icon = client.icon
-
+          {/* Radial Dashed Lines + Customer Nodes */}
+          {customers.map((customer, i) => {
+            // Calculate line end position
+            const centerX = 50 // Center in percentage
+            const centerY = 50
+            
             return (
-              <div key={i} className="absolute" style={{ left: "50%", top: "50%" }}>
-                {/* Connection line */}
+              <motion.div
+                key={i}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+              >
+                {/* Dashed line from center to customer */}
                 <svg
-                  className="absolute"
-                  style={{
-                    left: 0,
-                    top: 0,
-                    overflow: "visible",
-                  }}
+                  className="absolute inset-0 w-full h-full pointer-events-none"
+                  style={{ overflow: "visible" }}
                 >
                   <line
-                    x1="0"
-                    y1="0"
-                    x2={x}
-                    y2={y}
+                    x1={`${centerX}%`}
+                    y1={`${centerY}%`}
+                    x2={`${customer.x}%`}
+                    y2={`${customer.y}%`}
                     stroke="#CCFF00"
                     strokeWidth="1"
                     strokeDasharray="4 4"
-                    opacity={nodeProgress * 0.3}
+                    opacity="0.3"
                   />
                 </svg>
-                {/* Node */}
-                <div
-                  className="absolute flex flex-col items-center gap-1"
+
+                {/* Customer Node */}
+                <motion.div
+                  className="absolute flex flex-col items-center gap-1.5"
                   style={{
-                    transform: `translate(${x - 20}px, ${y - 20}px)`,
-                    opacity: nodeProgress,
+                    left: `${customer.x}%`,
+                    top: `${customer.y}%`,
+                    transform: "translate(-50%, -50%)",
                   }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.6 + i * 0.1 }}
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#F8F5F2]/15 bg-[#0A261D]/80">
-                    <Icon className="h-4 w-4 text-[#FBCFE8]" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-emerald-700/50 bg-emerald-950/60 backdrop-blur-sm shadow-lg">
+                    <Users className="h-5 w-5 text-[#FBCFE8]" />
                   </div>
-                  <span className="whitespace-nowrap font-mono text-[10px] text-[#F8F5F2]/50">
-                    {client.label}
+                  <span className="font-mono text-xs text-[#F8F5F2]/70 whitespace-nowrap">
+                    {customer.name}
                   </span>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             )
           })}
 
-          {/* Floating notifications */}
+          {/* Notification Bubbles */}
           {notifications.map((notif, i) => {
-            const delay = i * 0.15
-            const nProgress = Math.min(
-              Math.max((notifProgress - delay) / 0.5, 0),
-              1
-            )
             const Icon = notif.icon
             return (
-              <div
+              <motion.div
                 key={i}
-                className="absolute flex items-center gap-2 rounded-lg border border-[#CCFF00]/20 bg-[#0A261D]/90 px-3 py-2 shadow-lg backdrop-blur-sm"
+                className="absolute flex items-center gap-2 rounded-full border border-emerald-700/50 bg-emerald-950/80 px-3 py-2 shadow-lg backdrop-blur-md"
                 style={{
                   left: `${notif.x}%`,
                   top: `${notif.y}%`,
-                  opacity: nProgress,
-                  transform: `translateY(${(1 - nProgress) * 15}px) scale(${0.9 + nProgress * 0.1})`,
+                  transform: "translate(-50%, -50%)",
                 }}
+                initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.9 + i * 0.15 }}
               >
-                <Icon className="h-3 w-3 shrink-0 text-[#CCFF00]" />
-                <span className="whitespace-nowrap font-sans text-[10px] text-[#F8F5F2]/80 md:text-xs">
+                <Icon className="h-3.5 w-3.5 shrink-0 text-[#CCFF00]" />
+                <span className="whitespace-nowrap font-mono text-xs text-[#F8F5F2]/90">
                   {notif.text}
                 </span>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Features grid */}
-        <div
-          className="relative z-20 mt-8 grid max-w-3xl grid-cols-2 gap-3 px-4 md:mt-12 md:grid-cols-4 md:gap-4"
-          style={{
-            opacity: featuresProgress,
-            transform: `translateY(${(1 - featuresProgress) * 30}px)`,
-          }}
-        >
-          {features.map((feat, i) => {
-            const Icon = feat.icon
-            return (
-              <div
-                key={i}
-                className="flex flex-col items-center gap-2 rounded-xl border border-[#F8F5F2]/10 bg-[#0A261D]/60 p-4 text-center backdrop-blur-sm"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#CCFF00]/10">
-                  <Icon className="h-5 w-5 text-[#CCFF00]" />
-                </div>
-                <span className="font-sans text-xs font-medium text-[#F8F5F2]/90 md:text-sm">
-                  {feat.title}
-                </span>
-                <span className="font-sans text-[10px] text-[#F8F5F2]/50 md:text-xs">
-                  {feat.desc}
-                </span>
-              </div>
+              </motion.div>
             )
           })}
         </div>
       </div>
+
+      {/* Features Grid at Bottom */}
+      <motion.div
+        className="relative z-20 grid grid-cols-2 gap-3 px-4 pb-8 max-w-3xl md:grid-cols-4 md:gap-4"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 1.2 }}
+      >
+        {features.map((feat, i) => {
+          const Icon = feat.icon
+          return (
+            <motion.div
+              key={i}
+              className="flex flex-col items-center gap-2 rounded-xl border border-emerald-800/30 bg-emerald-950/30 p-4 text-center backdrop-blur-sm"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: 1.3 + i * 0.08 }}
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#CCFF00]/10">
+                <Icon className="h-5 w-5 text-[#CCFF00]" />
+              </div>
+              <span className="font-sans text-xs font-medium text-[#F8F5F2]/90">
+                {feat.title}
+              </span>
+              <span className="font-sans text-[10px] text-[#F8F5F2]/50">
+                {feat.desc}
+              </span>
+            </motion.div>
+          )
+        })}
+      </motion.div>
     </section>
   )
 }
