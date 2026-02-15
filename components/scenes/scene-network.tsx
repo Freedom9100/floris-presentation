@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import { useScrollProgress } from "@/hooks/use-scroll-progress"
 import { Bell, Users, Settings, Send, Gift, Repeat } from "lucide-react"
 
@@ -29,13 +29,20 @@ const features = [
 export function SceneNetwork() {
   const sectionRef = useRef<HTMLElement>(null)
   const progress = useScrollProgress(sectionRef)
+  const [radius, setRadius] = useState(160) // Default matches server render to avoid hydration mismatch
+
+  useEffect(() => {
+    const updateRadius = () =>
+      setRadius(window.innerWidth < 768 ? 100 : 160)
+    updateRadius()
+    window.addEventListener("resize", updateRadius)
+    return () => window.removeEventListener("resize", updateRadius)
+  }, [])
 
   const animProgress = Math.min(Math.max((progress - 0.15) / 0.6, 0), 1)
   const pulsePhase = animProgress * Math.PI * 4
   const notifProgress = Math.min(Math.max((animProgress - 0.4) / 0.3, 0), 1)
   const featuresProgress = Math.min(Math.max((animProgress - 0.6) / 0.3, 0), 1)
-
-  const radius = typeof window !== "undefined" && window.innerWidth < 768 ? 100 : 160
 
   return (
     <section ref={sectionRef} className="relative" style={{ height: "350vh" }}>
