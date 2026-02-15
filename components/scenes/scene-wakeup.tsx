@@ -1,7 +1,6 @@
 "use client"
 
 import { useRef } from "react"
-import Image from "next/image"
 import { useScrollProgress } from "@/hooks/use-scroll-progress"
 
 export function SceneWakeup() {
@@ -65,14 +64,15 @@ export function SceneWakeup() {
             opacity: bouquetOpacity,
           }}
         >
-          <Image
-            src="/images/bouquet.jpg"
+          <img
+            src="images/bouquet.jpg"
             alt="Premium bouquet"
             width={400}
             height={400}
             className="rounded-full object-cover"
             style={{ width: 320, height: 320 }}
-            priority
+            loading="eager"
+            fetchPriority="high"
           />
         </div>
 
