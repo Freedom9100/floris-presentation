@@ -1,114 +1,147 @@
 "use client"
 
-import { useRef } from "react"
-import { useScrollProgress } from "@/hooks/use-scroll-progress"
+import { motion } from "framer-motion"
 import { AlertTriangle, MessageSquare, MapPin, Clock, Percent } from "lucide-react"
 
 const chaosItems = [
-  { text: "Flowwow -20%", icon: Percent, x: -30, y: -20 },
-  { text: "WhatsApp (99+)", icon: MessageSquare, x: 25, y: -35 },
-  { text: "Где мой заказ?", icon: Clock, x: -35, y: 15 },
-  { text: "Адрес?", icon: MapPin, x: 30, y: 25 },
-  { text: "Ответьте!", icon: AlertTriangle, x: -15, y: -40 },
-  { text: "Перевод на карту?", icon: MessageSquare, x: 20, y: 40 },
-  { text: "Уточните цену", icon: AlertTriangle, x: -40, y: 0 },
-  { text: "Ошибка в адресе!", icon: MapPin, x: 35, y: -10 },
+  { text: "Flowwow -20%", icon: Percent, x: 12, y: 15 },
+  { text: "WhatsApp (99+)", icon: MessageSquare, x: 68, y: 8 },
+  { text: "Где мой заказ?", icon: Clock, x: 25, y: 35 },
+  { text: "Адрес?", icon: MapPin, x: 75, y: 42 },
+  { text: "Ответьте!", icon: AlertTriangle, x: 45, y: 12 },
+  { text: "Перевод на карту?", icon: MessageSquare, x: 82, y: 28 },
+  { text: "Уточните цену", icon: AlertTriangle, x: 8, y: 48 },
+  { text: "Ошибка в адресе!", icon: MapPin, x: 38, y: 55 },
+  { text: "Когда доставка?", icon: Clock, x: 15, y: 68 },
+  { text: "Скидка есть?", icon: Percent, x: 62, y: 65 },
+  { text: "Не отвечаете!", icon: AlertTriangle, x: 55, y: 25 },
+  { text: "Срочно нужно", icon: Clock, x: 88, y: 58 },
+]
+
+// Floating animation variants
+const floatVariants = [
+  {
+    y: [0, -8, 0],
+    x: [0, 3, 0],
+    transition: {
+      duration: 3.2,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+  {
+    y: [0, 6, 0],
+    x: [0, -4, 0],
+    transition: {
+      duration: 4.1,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
+  {
+    y: [0, -5, 0],
+    x: [0, 2, 0],
+    transition: {
+      duration: 3.7,
+      repeat: Infinity,
+      ease: "easeInOut",
+    },
+  },
 ]
 
 export function SceneChaos() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const progress = useScrollProgress(sectionRef)
-
-  const animProgress = Math.min(Math.max((progress - 0.15) / 0.6, 0), 1)
-  const cloudProgress = Math.min(Math.max((progress - 0.75) / 0.25, 0), 1)
-
   return (
-    <section ref={sectionRef} className="relative" style={{ height: "300vh" }}>
-      <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "radial-gradient(ellipse at center, #0f1a15 0%, #0A261D 80%)",
-          }}
-        />
+    <section className="relative min-h-screen flex flex-col items-center justify-between overflow-hidden py-20 md:py-32">
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "radial-gradient(ellipse at center, #0f1a15 0%, #0A261D 80%)",
+        }}
+      />
 
-        {/* Section title */}
-        <div
-          className="relative z-20 mb-12 text-center"
-          style={{
-            opacity: Math.min(animProgress * 3, 1),
-            transform: `translateY(${(1 - Math.min(animProgress * 3, 1)) * 30}px)`,
-          }}
-        >
-          <h2 className="font-serif text-3xl font-bold text-[#F8F5F2] md:text-5xl lg:text-6xl">
-            <span className="text-balance">
-              {"Почему вы "}
-              <span className="text-[#FBCFE8]">{"теряете деньги"}</span>
-              {" сейчас?"}
-            </span>
-          </h2>
-        </div>
+      {/* Section title */}
+      <motion.div
+        className="relative z-20 text-center px-4 pt-8"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <h2 className="font-serif text-3xl font-bold text-[#F8F5F2] md:text-5xl lg:text-6xl">
+          <span className="text-balance">
+            {"Почему вы "}
+            <span className="text-[#FBCFE8]">{"теряете деньги"}</span>
+            {" сейчас?"}
+          </span>
+        </h2>
+      </motion.div>
 
-        {/* Chaos bubble cloud */}
-        <div className="relative z-10 flex h-[400px] w-full max-w-3xl items-center justify-center">
+      {/* Chaos notification storm - absolute positioned */}
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-4 min-h-[600px] md:min-h-[500px] flex items-center justify-center">
+        <div className="relative w-full h-[600px] md:h-[500px]">
           {chaosItems.map((item, i) => {
-            const delay = i * 0.1
-            const itemProgress = Math.min(
-              Math.max((animProgress - delay) / 0.4, 0),
-              1
-            )
             const Icon = item.icon
-
-            // During cloud phase, items converge
-            const cloudX = item.x * (1 - cloudProgress * 0.7)
-            const cloudY = item.y * (1 - cloudProgress * 0.7)
-
+            const floatVariant = floatVariants[i % floatVariants.length]
+            
             return (
-              <div
+              <motion.div
                 key={i}
-                className="absolute flex items-center gap-2 rounded-xl border border-[#F8F5F2]/10 bg-[#0A261D]/80 px-4 py-3 shadow-lg backdrop-blur-sm"
+                className="absolute flex items-center gap-2 rounded-full border border-emerald-800/50 bg-emerald-950/40 px-4 py-2.5 shadow-lg backdrop-blur-sm"
                 style={{
-                  opacity: itemProgress,
-                  transform: `translate(${cloudX}%, ${cloudY}%) scale(${0.8 + itemProgress * 0.2})`,
-                  left: `${50 + item.x}%`,
-                  top: `${50 + item.y}%`,
-                  marginLeft: "-80px",
-                  marginTop: "-20px",
+                  left: `${item.x}%`,
+                  top: `${item.y}%`,
+                  transform: "translate(-50%, -50%)",
                 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ 
+                  duration: 0.5, 
+                  delay: 0.1 + i * 0.08,
+                  ease: "easeOut"
+                }}
+                animate={floatVariant}
               >
-                <Icon className="h-4 w-4 shrink-0 text-[#CCFF00]" />
+                <Icon className="h-3.5 w-3.5 shrink-0 text-[#CCFF00] md:h-4 md:w-4" />
                 <span className="whitespace-nowrap font-mono text-xs text-[#F8F5F2]/90 md:text-sm">
                   {item.text}
                 </span>
-              </div>
+              </motion.div>
             )
           })}
         </div>
-
-        {/* Bottom stats */}
-        <div
-          className="relative z-20 mt-8 flex flex-col items-center gap-6 px-4 md:flex-row md:gap-12"
-          style={{
-            opacity: Math.min(Math.max((animProgress - 0.4) / 0.3, 0), 1),
-            transform: `translateY(${(1 - Math.min(Math.max((animProgress - 0.4) / 0.3, 0), 1)) * 20}px)`,
-          }}
-        >
-          {[
-            { figure: "20%", label: "комиссии агрегаторов съедают маржу" },
-            { figure: "70%", label: "времени флористов уходит на переписки" },
-            { figure: "2 мин", label: "и клиент уходит к конкуренту" },
-          ].map((stat, i) => (
-            <div key={i} className="flex flex-col items-center gap-1 text-center">
-              <span className="font-mono text-3xl font-bold text-[#CCFF00] md:text-4xl">
-                {stat.figure}
-              </span>
-              <span className="max-w-[180px] font-sans text-sm text-[#F8F5F2]/60">
-                {stat.label}
-              </span>
-            </div>
-          ))}
-        </div>
       </div>
+
+      {/* Bottom stats - clean row */}
+      <motion.div
+        className="relative z-20 flex flex-col items-center gap-8 px-4 pb-8 md:flex-row md:gap-16"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+      >
+        {[
+          { figure: "20%", label: "комиссии агрегаторов\nсъедают маржу" },
+          { figure: "50%", label: "времени флористов\nуходит на переписки" },
+          { figure: "3 мин", label: "и клиент уходит\nк конкуренту" },
+        ].map((stat, i) => (
+          <motion.div 
+            key={i} 
+            className="flex flex-col items-center gap-2 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.5 + i * 0.1 }}
+          >
+            <span className="font-mono text-5xl font-bold text-[#CCFF00] md:text-6xl leading-none">
+              {stat.figure}
+            </span>
+            <span className="max-w-[200px] font-sans text-sm text-[#F8F5F2]/50 leading-tight whitespace-pre-line">
+              {stat.label}
+            </span>
+          </motion.div>
+        ))}
+      </motion.div>
     </section>
   )
 }

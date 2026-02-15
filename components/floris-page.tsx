@@ -15,25 +15,39 @@ export function FlorisPage() {
       <ProgressIndicator />
       
       {/* Scene 1: The Wake-up Call */}
-      <SceneWakeup />
+      <div id="wakeup">
+        <SceneWakeup />
+      </div>
 
       {/* Scene 2: The Chaos */}
-      <SceneChaos />
+      <div id="chaos">
+        <SceneChaos />
+      </div>
 
       {/* Scene 3: The Core - TMA Solution */}
-      <SceneCore />
+      <div id="core">
+        <SceneCore />
+      </div>
 
       {/* Scene 4: Efficiency Split - Old vs New */}
-      <SceneEfficiency />
+      <div id="efficiency">
+        <SceneEfficiency />
+      </div>
 
       {/* Scene 5: Receipt Math */}
-      <SceneReceipt />
+      <div id="receipt">
+        <SceneReceipt />
+      </div>
 
       {/* Scene 6: The Network - Client Base & Admin */}
-      <SceneNetwork />
+      <div id="network">
+        <SceneNetwork />
+      </div>
 
       {/* Scene 7: The Close - CTA */}
-      <SceneClose />
+      <div id="close">
+        <SceneClose />
+      </div>
     </main>
   )
 }

@@ -1,15 +1,16 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
 
 const scenes = [
-  "Вызов",
-  "Проблема",
-  "Решение",
-  "Сравнение",
-  "Экономика",
-  "Клиенты",
-  "Старт",
+  { id: "wakeup", label: "Вызов" },
+  { id: "chaos", label: "Проблема" },
+  { id: "core", label: "Решение" },
+  { id: "efficiency", label: "Сравнение" },
+  { id: "receipt", label: "Экономика" },
+  { id: "network", label: "Клиенты" },
+  { id: "close", label: "Старт" },
 ]
 
 export function ProgressIndicator() {
@@ -23,6 +24,7 @@ export function ProgressIndicator() {
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true })
+    handleScroll()
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
@@ -35,13 +37,15 @@ export function ProgressIndicator() {
     <>
       {/* Top progress bar */}
       <div className="fixed left-0 right-0 top-0 z-50 h-[2px] bg-[#0A261D]/50">
-        <div
-          className="h-full bg-[#CCFF00] transition-all duration-150"
+        <motion.div
+          className="h-full bg-[#CCFF00]"
+          initial={{ width: 0 }}
           style={{ width: `${scrollPercent * 100}%` }}
+          transition={{ duration: 0.15 }}
         />
       </div>
 
-      {/* Side dots - hidden on mobile */}
+      {/* Side navigation dots - clickable anchors */}
       <nav
         className="fixed right-4 top-1/2 z-50 hidden -translate-y-1/2 flex-col items-end gap-3 md:flex"
         aria-label="Scene navigation"
@@ -50,10 +54,17 @@ export function ProgressIndicator() {
           const isActive = i === activeScene
           const isPast = i < activeScene
           return (
-            <div key={i} className="flex items-center gap-2">
+            <motion.a
+              key={i}
+              href={`#${scene.id}`}
+              className="flex items-center gap-2 group cursor-pointer"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+            >
               {isActive && (
                 <span className="font-mono text-[10px] uppercase tracking-wider text-[#CCFF00]/70">
-                  {scene}
+                  {scene.label}
                 </span>
               )}
               <div
@@ -71,7 +82,7 @@ export function ProgressIndicator() {
                     : "none",
                 }}
               />
-            </div>
+            </motion.a>
           )
         })}
       </nav>
