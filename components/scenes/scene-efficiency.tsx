@@ -1,7 +1,6 @@
 "use client"
 
 import { useRef } from "react"
-import Image from "next/image"
 import { useScrollProgress } from "@/hooks/use-scroll-progress"
 import { X, Check } from "lucide-react"
 
@@ -82,13 +81,14 @@ export function SceneEfficiency() {
 
             {/* Blurred florist image */}
             <div className="mb-5 overflow-hidden rounded-xl">
-              <Image
-                src="/images/florist-chaos.jpg"
+              <img
+                src="images/florist-chaos.jpg"
                 alt="Florist chaos"
                 width={400}
                 height={200}
                 className="h-32 w-full object-cover opacity-60"
                 style={{ filter: "grayscale(0.5) blur(1px)" }}
+                loading="lazy"
               />
             </div>
 
@@ -133,12 +133,13 @@ export function SceneEfficiency() {
 
             {/* Clean phone app image */}
             <div className="mb-5 overflow-hidden rounded-xl border border-[#CCFF00]/10">
-              <Image
-                src="/images/phone-app.jpg"
+              <img
+                src="images/phone-app.jpg"
                 alt="Telegram Mini App interface"
                 width={400}
                 height={200}
                 className="h-32 w-full object-cover"
+                loading="lazy"
               />
             </div>
 

@@ -1,7 +1,6 @@
 "use client"
 
 import { useRef } from "react"
-import Image from "next/image"
 import { useScrollProgress } from "@/hooks/use-scroll-progress"
 import { ShoppingCart, CreditCard, Truck } from "lucide-react"
 
@@ -85,13 +84,14 @@ export function SceneCore() {
               </div>
 
               {/* Product image */}
-              <Image
-                src="/images/bouquet.jpg"
+              <img
+                src="images/bouquet.jpg"
                 alt="Bouquet in app"
                 width={300}
                 height={200}
                 className="mb-3 rounded-xl object-cover"
                 style={{ height: 160 }}
+                loading="lazy"
               />
 
               {/* Product card */}

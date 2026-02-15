@@ -1,10 +1,12 @@
 /** @type {import('next').NextConfig} */
 const isProd = process.env.NODE_ENV === 'production'
+const isGitHubPages =
+  process.env.GITHUB_ACTIONS === 'true' || process.env.GITHUB_PAGES === 'true'
 const [owner, repoName] = process.env.GITHUB_REPOSITORY?.split('/') ?? []
 const resolvedRepoName = repoName ?? 'floris-presentation'
 // User/organization site repositories are named "<owner>.github.io" and live at the domain root.
 const isUserSite = !!owner && resolvedRepoName === `${owner}.github.io`
-const basePath = isProd && !isUserSite ? `/${resolvedRepoName}` : ''
+const basePath = isProd && isGitHubPages && !isUserSite ? `/${resolvedRepoName}` : ''
 
 const nextConfig = {
   // GitHub Pages = static hosting, so we must export to /out
@@ -16,7 +18,7 @@ const nextConfig = {
   // When hosted at https://<user>.github.io/<repo>/ we need a basePath
   basePath,
   // Prefix assets as well (helps avoid 404 for /_next/* on Pages)
-  assetPrefix: isProd ? `${basePath}/` : '',
+  assetPrefix: isProd && isGitHubPages && basePath ? `${basePath}/` : '',
   typescript: {
     ignoreBuildErrors: true,
   }
